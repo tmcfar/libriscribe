@@ -72,7 +72,7 @@ def select_llm(project_knowledge_base: ProjectKnowledgeBase):
     elif "Mistral" in llm_choice:
         llm_choice = "mistral"
         
-    project_knowledge_base.set("llm_provider", llm_choice)
+    project_knowledge_base.llm_provider = llm_choice
     return llm_choice
 
 def introduction():
@@ -203,7 +203,7 @@ def get_category_and_genre(project_knowledge_base: ProjectKnowledgeBase):
         ["Fiction", "Non-Fiction", "Business", "Research Paper"],
         allow_custom=True,
     )
-    project_knowledge_base.set("category", category)
+    project_knowledge_base.category = category
 
     if category == "Fiction":
         genre_options = ["Fantasy", "Science Fiction", "Romance", "Thriller", "Mystery", "Historical Fiction", "Horror", "Young Adult", "Contemporary"]
@@ -213,7 +213,7 @@ def get_category_and_genre(project_knowledge_base: ProjectKnowledgeBase):
         genre_options = ["Marketing", "Management", "Finance", "Entrepreneurship", "Leadership", "Sales", "Productivity"]
     elif category == "Research Paper":
         genre = typer.prompt("🔍 Enter the field of study for your research paper")
-        project_knowledge_base.set("genre", genre)
+        project_knowledge_base.genre = genre
         return
     else:
         genre_options = []  # Should not happen, but for safety
@@ -221,7 +221,7 @@ def get_category_and_genre(project_knowledge_base: ProjectKnowledgeBase):
     if genre_options:
         console.print("")
         genre = select_from_list(f"🏷️ What genre/subject best fits your {category} book?", genre_options, allow_custom=True)
-        project_knowledge_base.set("genre", genre)
+        project_knowledge_base.genre = genre
 
 
 
@@ -232,26 +232,26 @@ def get_book_length(project_knowledge_base: ProjectKnowledgeBase):
         ["Short Story (1-3 chapters)", "Novella (5-8 chapters)", "Novel (15+ chapters)", "Full Book (Non-Fiction)"],
         allow_custom=False,
     )
-    project_knowledge_base.set("book_length", book_length)
+    project_knowledge_base.book_length = book_length
 
 def get_fiction_details(project_knowledge_base: ProjectKnowledgeBase): 
     if project_knowledge_base.category == "Fiction":
         console.print("")
         num_characters = typer.prompt("👥 How many main characters will your story have?", type=int)
-        project_knowledge_base.set("num_characters", num_characters)
+        project_knowledge_base.num_characters = num_characters
         console.print("")
         worldbuilding_needed = typer.confirm("🌍 Does your story require extensive worldbuilding?")
-        project_knowledge_base.set("worldbuilding_needed", worldbuilding_needed)
+        project_knowledge_base.worldbuilding_needed = worldbuilding_needed
 
 def get_review_preference(project_knowledge_base: ProjectKnowledgeBase): 
     console.print("")
     review_preference = select_from_list("🔍 How would you like your chapters to be reviewed?", ["Human (you'll review it)", "AI (automatic review)"])
-    project_knowledge_base.set("review_preference", review_preference)
+    project_knowledge_base.review_preference = review_preference
 
 def get_description(project_knowledge_base: ProjectKnowledgeBase): 
     console.print("")
     description = typer.prompt("📝 Provide a brief description of your book's concept or plot")
-    project_knowledge_base.set("description", description)
+    project_knowledge_base.description = description
 
 def generate_and_review_concept(project_knowledge_base: ProjectKnowledgeBase): 
     project_manager.generate_concept()
@@ -430,43 +430,43 @@ def get_advanced_fiction_details(project_knowledge_base: ProjectKnowledgeBase):
     num_characters_str = typer.prompt(
         "👥 How many main characters do you envision? (e.g., 3, 2-4, 5+)", default="2-3"
     )
-    project_knowledge_base.set("num_characters_str", num_characters_str)
+    project_knowledge_base.num_characters_str = num_characters_str
     
     # Convert to appropriate type
     if "-" in num_characters_str:
         try:
             min_val, max_val = map(int, num_characters_str.split("-"))
-            project_knowledge_base.set("num_characters", (min_val, max_val))
+            project_knowledge_base.num_characters = (min_val, max_val)
         except ValueError:
             # Fallback if conversion fails
-            project_knowledge_base.set("num_characters", (2, 3))
+            project_knowledge_base.num_characters = (2, 3)
     elif "+" in num_characters_str:
         try:
             base_val = int(num_characters_str.replace("+", ""))
-            project_knowledge_base.set("num_characters", base_val)
+            project_knowledge_base.num_characters = base_val
         except ValueError:
-            project_knowledge_base.set("num_characters", 3)
+            project_knowledge_base.num_characters = 3
     else:
         try:
-            project_knowledge_base.set("num_characters", int(num_characters_str))
+            project_knowledge_base.num_characters = int(num_characters_str)
         except ValueError:
             # Fallback if conversion fails
-            project_knowledge_base.set("num_characters", 3)
+            project_knowledge_base.num_characters = 3
 
     console.print("")
     worldbuilding_needed = typer.confirm("🌍 Does your story need extensive worldbuilding?")
-    project_knowledge_base.set("worldbuilding_needed", worldbuilding_needed)
+    project_knowledge_base.worldbuilding_needed = worldbuilding_needed
 
     console.print("")
     tone = select_from_list("🎭 What overall tone would you like for your book?", 
                      ["Serious", "Funny", "Romantic", "Informative", "Persuasive"])
     
-    project_knowledge_base.set("tone", tone)
+    project_knowledge_base.tone = tone
 
     console.print("")
     target_audience = select_from_list("👥 Who is your target audience?", 
                              ["Children", "Teens", "Young Adult", "Adults"])
-    project_knowledge_base.set("target_audience", target_audience)
+    project_knowledge_base.target_audience = target_audience
 
     console.print("")
     book_length = select_from_list(
@@ -474,55 +474,55 @@ def get_advanced_fiction_details(project_knowledge_base: ProjectKnowledgeBase):
         ["Short Story", "Novella", "Novel", "Full Book"],
         allow_custom=False,
     )
-    project_knowledge_base.set("book_length", book_length)
+    project_knowledge_base.book_length = book_length
 
     console.print("")
     num_chapters_str = typer.prompt(
         "📑 Approximately how many chapters do you want? (e.g., 10, 8-12, 20+)",
         default="8-12"
     )
-    project_knowledge_base.set("num_chapters_str", num_chapters_str)
+    project_knowledge_base.num_chapters_str = num_chapters_str
     
     # Convert to appropriate type
     if "-" in num_chapters_str:
         try:
             min_val, max_val = map(int, num_chapters_str.split("-"))
-            project_knowledge_base.set("num_chapters", (min_val, max_val))
+            project_knowledge_base.num_chapters = (min_val, max_val)
         except ValueError:
             # Fallback if conversion fails
-            project_knowledge_base.set("num_chapters", (8, 12))
+            project_knowledge_base.num_chapters = (8, 12)
     elif "+" in num_chapters_str:
         try:
             base_val = int(num_chapters_str.replace("+", ""))
-            project_knowledge_base.set("num_chapters", base_val)
+            project_knowledge_base.num_chapters = base_val
         except ValueError:
-            project_knowledge_base.set("num_chapters", 12)
+            project_knowledge_base.num_chapters = 12
     else:
         try:
-            project_knowledge_base.set("num_chapters", int(num_chapters_str))
+            project_knowledge_base.num_chapters = int(num_chapters_str)
         except ValueError:
             # Fallback if conversion fails
-            project_knowledge_base.set("num_chapters", 10)
+            project_knowledge_base.num_chapters = 10
             
     inspired_by = typer.prompt("✨ Are there any authors, books, or series that inspire you? (Optional)")
-    project_knowledge_base.set("inspired_by", inspired_by)
+    project_knowledge_base.inspired_by = inspired_by
 
 def get_advanced_nonfiction_details(project_knowledge_base: ProjectKnowledgeBase): 
-    project_knowledge_base.set("num_characters", 0)
+    project_knowledge_base.num_characters = 0
     project_knowledge_base.set("num_chapters",0)
     project_knowledge_base.set("worldbuilding_needed",False)
 
     console.print("")
     tone = select_from_list("🎭 What tone would you like for your non-fiction book?", 
                     ["Serious", "Funny", "Romantic", "Informative", "Persuasive"])
-    project_knowledge_base.set("tone", tone)
+    project_knowledge_base.tone = tone
 
     console.print("")
     target_audience = select_from_list(
         "👥 Who is your target audience?",
         ["Children", "Teens", "Young Adult", "Adults", "Professional/Expert"],
     )
-    project_knowledge_base.set("target_audience", target_audience)
+    project_knowledge_base.target_audience = target_audience
 
     console.print("")
     book_length = select_from_list(
@@ -530,7 +530,7 @@ def get_advanced_nonfiction_details(project_knowledge_base: ProjectKnowledgeBase
         ["Article", "Essay", "Full Book"],
         allow_custom=False,
     )
-    project_knowledge_base.set("book_length", book_length)
+    project_knowledge_base.book_length = book_length
 
     console.print("")
     author_experience = typer.prompt("🧠 What is your experience or expertise in this subject?")
@@ -543,7 +543,7 @@ def get_advanced_business_details(project_knowledge_base: ProjectKnowledgeBase):
 
     console.print("")
     tone = select_from_list("Select Tone", ["Informative", "Motivational", "Instructive"])
-    project_knowledge_base.set("tone", tone)
+    project_knowledge_base.tone = tone
 
     console.print("")
     target_audience = select_from_list(
@@ -556,7 +556,7 @@ def get_advanced_business_details(project_knowledge_base: ProjectKnowledgeBase):
             "General Business Readers",
         ],
     )
-    project_knowledge_base.set("target_audience", target_audience)
+    project_knowledge_base.target_audience = target_audience
 
     console.print("")
     book_length = select_from_list(
@@ -564,7 +564,7 @@ def get_advanced_business_details(project_knowledge_base: ProjectKnowledgeBase):
         ["Pamphlet", "Guidebook", "Full Book"],
         allow_custom=False,
     )
-    project_knowledge_base.set("book_length", book_length)
+    project_knowledge_base.book_length = book_length
 
     console.print("")
     key_takeaways = typer.prompt("What are the key takeaways you want readers to gain?")
@@ -572,7 +572,7 @@ def get_advanced_business_details(project_knowledge_base: ProjectKnowledgeBase):
 
     console.print("")
     case_studies = typer.confirm("Will you include case studies?")
-    project_knowledge_base.set("case_studies", case_studies)
+    project_knowledge_base.case_studies = case_studies
 
     console.print("")
     actionable_advice = typer.confirm("Will you provide actionable advice/exercises?")
@@ -609,7 +609,7 @@ def get_advanced_business_details(project_knowledge_base: ProjectKnowledgeBase):
             ],
             allow_custom=True,
         )
-        project_knowledge_base.set("sales_focus", sales_focus)
+        project_knowledge_base.sales_focus = sales_focus
 
 def get_advanced_research_details(project_knowledge_base: ProjectKnowledgeBase): 
     project_knowledge_base.set("num_characters",0)
@@ -623,7 +623,7 @@ def get_advanced_research_details(project_knowledge_base: ProjectKnowledgeBase):
         ["Academic Community", "Researchers", "Students", "General Public (if applicable)"],
     )
     console.print("")
-    project_knowledge_base.set("target_audience", target_audience)
+    project_knowledge_base.target_audience = target_audience
 
     console.print("")
     project_knowledge_base.set("book_length","Academic Article")
@@ -634,7 +634,7 @@ def get_advanced_research_details(project_knowledge_base: ProjectKnowledgeBase):
 
     console.print("")
     hypothesis = typer.prompt("What is your hypothesis (if applicable)?")
-    project_knowledge_base.set("hypothesis", hypothesis)
+    project_knowledge_base.hypothesis = hypothesis
 
     console.print("")
     methodology = select_from_list(
@@ -642,7 +642,7 @@ def get_advanced_research_details(project_knowledge_base: ProjectKnowledgeBase):
         ["Quantitative", "Qualitative", "Mixed Methods"],
         allow_custom=True,
     )
-    project_knowledge_base.set("methodology", methodology)
+    project_knowledge_base.methodology = methodology
 
 def get_dynamic_questions(project_knowledge_base: ProjectKnowledgeBase): 
     print("\nNow, let's dive into some genre-specific questions...")
@@ -714,7 +714,7 @@ def select_language(project_knowledge_base: ProjectKnowledgeBase):
         "Hindi"
     ]
     language = select_from_list("🌐 Select the language for your book:", language_options, allow_custom=True)
-    project_knowledge_base.set("language", language)
+    project_knowledge_base.language = language
     return language
 
 @app.command()

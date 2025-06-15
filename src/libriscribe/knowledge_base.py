@@ -34,7 +34,7 @@ class Chapter(BaseModel):
 class Character(BaseModel):
     """A character in the book project."""
 
-    name: str = Field(..., min_length=1)
+    name: str = "Unnamed Character"
     age: str
     physical_description: str
     personality_traits: str
@@ -50,15 +50,15 @@ class Character(BaseModel):
 class ProjectKnowledgeBase(BaseModel):
     """Manages metadata and story information for a book project."""
 
-    project_name: str = Field(..., min_length=1)
-    title: str = Field(..., min_length=1)
-    category: str = Field(..., pattern="^(fiction|non-fiction)$")
-    genre: str = Field(..., min_length=1)
-    description: str = Field(..., min_length=1)
-    language: str = Field(..., pattern="^[a-z]{2}$")
-    book_length: str = Field(..., pattern="^(Short Story|Novella|Novel)$")
-    num_characters: str = Field(..., min_length=1)
-    num_chapters: int = Field(..., gt=0)
+    project_name: str = ""
+    title: str = "Untitled"
+    category: str = "fiction"
+    genre: str = "Fantasy"
+    description: str = "A great story"
+    language: str = "en"
+    book_length: str = "Novel"
+    num_characters: str = "5"
+    num_chapters: int = 10
     logline: str = ""
     outline: str = ""
     characters: List[Character] = []
